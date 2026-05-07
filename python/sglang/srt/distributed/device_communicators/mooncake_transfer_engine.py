@@ -189,11 +189,23 @@ class MooncakeTransferEngine:
                 device_name if device_name is not None else "",
             )
         else:
+            protocol = envs.SGLANG_MOONCAKE_PROTOCOL.get()
+            if protocol not in ("rdma", "tcp"):
+                raise ValueError(
+                    f"SGLANG_MOONCAKE_PROTOCOL must be 'rdma' or 'tcp', "
+                    f"got {protocol!r}"
+                )
+            # Mooncake's TCP transport does not bind to an IB device;
+            # forcing an empty string avoids spurious "device not found"
+            # errors on hosts that have no RDMA NIC.
+            effective_device = (
+                device_name if (protocol == "rdma" and device_name) else ""
+            )
             ret_value = self.engine.initialize(
                 hostname,
                 "P2PHANDSHAKE",
-                "rdma",
-                device_name if device_name is not None else "",
+                protocol,
+                effective_device,
             )
         if ret_value != 0:
             logger.error("Mooncake Transfer Engine initialization failed.")

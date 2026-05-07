@@ -304,6 +304,11 @@ class Envs:
     ENABLE_ASCEND_TRANSFER_WITH_MOONCAKE = EnvBool(False)
     ASCEND_NPU_PHY_ID = EnvInt(-1)
     SGLANG_MOONCAKE_SEND_AUX_TCP = EnvBool(False)
+    # Protocol used by MooncakeTransferEngine for disaggregated KV transfer.
+    # Accepts "rdma" (default, requires an RDMA-capable NIC) or "tcp"
+    # (works on plain Ethernet clusters without RDMA). Distinct from the
+    # MOONCAKE_PROTOCOL env var below, which configures the Mooncake Store.
+    SGLANG_MOONCAKE_PROTOCOL = EnvStr("rdma")
 
     # Mooncake Store
     SGLANG_HICACHE_MOONCAKE_CONFIG_PATH = EnvStr(None)
